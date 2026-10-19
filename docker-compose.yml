@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-event_planet}
+      POSTGRES_USER: ${POSTGRES_USER:-event_planet}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-event_planet}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      DEBUG: ${DEBUG:-false}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-*}
+      POSTGRES_DB: ${POSTGRES_DB:-event_planet}
+      POSTGRES_USER: ${POSTGRES_USER:-event_planet}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-event_planet}
+      DB_HOST: db
+      DB_PORT: "5432"
+      JWT_SECRET: ${JWT_SECRET:-change-me-jwt-secret}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      # Optional: create a superuser on boot.
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-}
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:
