@@ -6,10 +6,20 @@ from .base import *
 def _env_bool(name: str, default: str = "false") -> bool:
     return os.getenv(name, default).strip().lower() in {"1", "true", "yes", "on"}
 
+def _env_list(name: str, default: str) -> list:
+    """Comma-separated env var -> list. Tolerates quotes/extra spaces."""
+    raw = os.getenv(name, default).strip().strip('"').strip("'")
+    return [h.strip() for h in raw.split(",") if h.strip()]
+
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-only-key-change-me")
 DEBUG = _env_bool("DEBUG", "false")
 
-ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "*").split(",") if h.strip()]
+ALLOWED_HOSTS = _env_list("ALLOWED_HOSTS", "*")
+# Hardened fallback: ALLOWED_HOSTS must NEVER end up empty. With DEBUG=false
+# an empty list makes Django answer 400 (DisallowedHost) to every request,
+# including http://127.0.0.1:8000 — the exact bug this guards against.
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["*"] if DEBUG else ["localhost", "127.0.0.1", "[::1]"]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (

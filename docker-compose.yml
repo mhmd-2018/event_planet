@@ -3,9 +3,9 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-event_planet}
-      POSTGRES_USER: ${POSTGRES_USER:-event_planet}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-event_planet}
+      POSTGRES_DB: ${POSTGRES_DB:-eventPlanet}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mhmd2306}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -22,19 +22,24 @@ services:
         condition: service_healthy
     environment:
       SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
-      DEBUG: ${DEBUG:-false}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-*}
-      POSTGRES_DB: ${POSTGRES_DB:-event_planet}
-      POSTGRES_USER: ${POSTGRES_USER:-event_planet}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-event_planet}
+      DEBUG: ${DEBUG:-True}
+      ALLOWED_HOSTS: "${ALLOWED_HOSTS:-*}"
+      POSTGRES_DB: ${POSTGRES_DB:-eventPlanet}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mhmd2306}
       DB_HOST: db
       DB_PORT: "5432"
       JWT_SECRET: ${JWT_SECRET:-change-me-jwt-secret}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       # Optional: create a superuser on boot.
-      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-}
-      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-}
-      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-}
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-mhmd}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-mhmd2003hosien@gmail.com}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-Mh23061383}
+      # Lower worker count: 3 workers on Docker Desktop can hit the memory
+      # limit (the "Worker was sent SIGKILL! Perhaps out of memory?" error).
+      # entrypoint.sh already reads this variable.
+      GUNICORN_WORKERS: "${GUNICORN_WORKERS:-2}"
+      
     ports:
       - "8000:8000"
 

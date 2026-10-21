@@ -2,6 +2,7 @@
 .git
 .gitignore
 .dockerignore
+.env.example
 .env
 db.sqlite3
 staticfiles/
@@ -15,3 +16,4 @@ venv/
 .vscode/
 Dockerfile
 docker-compose.yml
+eventenv/

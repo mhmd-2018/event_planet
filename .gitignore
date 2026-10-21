@@ -13,10 +13,10 @@ media/
 
 # Env & secrets
 .env.example
+.env
 
 # Tooling
 .idea/
 .vscode/
 *.log
 .DS_Store
-*.sh

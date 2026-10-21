@@ -65,18 +65,6 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database: PostgreSQL when DB_HOST is provided (Docker), SQLite otherwise.
 # --------------------------------------------------------------------------- #
 
-DATABASES = {
-     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "event_planet"),
-        "USER": os.getenv("POSTGRES_USER", "event_planet"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "event_planet"),
-        "HOST": os.getenv("DB_HOST", "db"),
-        "PORT": os.getenv("DB_PORT", "5432"),
-    }
-}
-
-
 AUTH_USER_MODEL = "accounts.User"
 
 AUTH_PASSWORD_VALIDATORS = [
